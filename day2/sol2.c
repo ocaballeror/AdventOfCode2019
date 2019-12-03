@@ -75,7 +75,7 @@ int main(){
         for(verb=0; verb<=99 && !found; verb++) {
             memcpy(registers, input, count * sizeof(int));
             res = run(registers, noun, verb);
-            printf("n=%d, v=%d, res: %d\n", noun, verb, res);
+            // printf("n=%d, v=%d, res: %d\n", noun, verb, res);
             if(res == expect) {
                 found = 1;
                 noun--; verb--; // because the for loops will increment them before exiting
@@ -84,7 +84,6 @@ int main(){
     }
 
     int solution = 100 * noun + verb;
-    printf("Noun: %d, Verb: %d\n", noun, verb);
     printf("Solution: %d\n", solution);
 
     free(input);
