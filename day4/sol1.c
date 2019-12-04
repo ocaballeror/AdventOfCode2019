@@ -27,5 +27,5 @@ int main(){
     }
 
     printf("Matches: %d\n", good);
-	return 0;
+    return 0;
 }
