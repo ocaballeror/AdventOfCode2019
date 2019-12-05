@@ -21,29 +21,29 @@ t_op operations [] = {
  * returns the number of elements in it.
  * */
 int* read_input(size_t* size) {
-    FILE *file = fopen("input", "r");
-    if(!file) {
-        perror("Input file");
-        exit(1);
-    }
+	FILE *file = fopen("input", "r");
+	if(!file) {
+		perror("Input file");
+		exit(1);
+	}
 
-    // Count the number of elements in the input. start at one because the last
-    // element doesn't have a comma
-    int count = 1;
-    char c;
-    while ((c = fgetc(file)) != EOF) {
-        if (c == ',') count ++;
-    }
-    *size = count;
+	// Count the number of elements in the input. start at one because the last
+	// element doesn't have a comma
+	int count = 1;
+	char c;
+	while ((c = fgetc(file)) != EOF) {
+		if (c == ',') count ++;
+	}
+	*size = count;
 
-    // Read our input and store it in the registers array
-    int* registers = (int*)malloc(count * sizeof(int));
-    fseek(file, 0, SEEK_SET);
-    int i = 0;
-    while((fscanf(file, "%d,", &registers[i])) != EOF) i++;
-    fclose(file);
+	// Read our input and store it in the registers array
+	int* registers = (int*)malloc(count * sizeof(int));
+	fseek(file, 0, SEEK_SET);
+	int i = 0;
+	while((fscanf(file, "%d,", &registers[i])) != EOF) i++;
+	fclose(file);
 
-    return registers;
+	return registers;
 }
 
 // Run a single operation.
@@ -86,27 +86,27 @@ int run_op(int *registers, int pc) {
 }
 
 int run(int *registers) {
-    // Run the program
-    int pc = 0;
-    while(registers[pc] != 99) {
+	// Run the program
+	int pc = 0;
+	while(registers[pc] != 99) {
 		pc = run_op(registers, pc);
-    }
+	}
 
-    return registers[0];
+	return registers[0];
 }
 
 int main(){
-    size_t count;
-    int *registers = read_input(&count);
+	size_t count;
+	int *registers = read_input(&count);
 	run(registers);
 
-    /* printf("Final state: "); */
-    /* for(int i=0; i<count; i++) { */
-    /*     printf("%d,", registers[i]); */
-    /* } */
-    /* printf("\n"); */
+	/* printf("Final state: "); */
+	/* for(int i=0; i<count; i++) { */
+	/*     printf("%d,", registers[i]); */
+	/* } */
+	/* printf("\n"); */
 
-    free(registers);
+	free(registers);
 
-    return 0;
+	return 0;
 }
