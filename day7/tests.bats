@@ -3,8 +3,8 @@
 
 setup() {
 	cp input $BATS_TMPDIR
-	gcc -lm sol1.c -o sol1
-	gcc -lm sol2.c -o sol2
+	gcc -lm sol1.c list.c -o sol1
+	gcc -lm sol2.c list.c -o sol2
 }
 
 teardown() {

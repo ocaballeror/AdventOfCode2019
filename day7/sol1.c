@@ -3,86 +3,14 @@
 #include <string.h>
 #include <math.h>
 
+#include "list.h"
+
 #define N_AMPS 5
 
 typedef struct {
 	int args;  // Number of args
 	int output;  // Output arg number
 } t_op;
-
-typedef struct {
-	int *values;
-	int length;
-	int size;
-	int shift;
-} list_t;
-
-/***************** LIST OPERATIONS ********************************/
-/**
- * Initializes and returns a new list
- * */
-list_t init_list() {
-	int *initial = (int*)malloc(10 * sizeof(int));
-	list_t list = {.size=10, .length=0, .shift=0, .values=initial};
-	return list;
-}
-
-/**
- * Retrieve the element at the specified index. This is preferred over using []
- * on .values
- * */
-int at(list_t *list, int index){
-	return list->values[index + list->shift];
-}
-
-/**
- * Print the list in one line, prefixed by the given string
- * */
-void print(list_t *list, char *name) {
-	printf("%s: [", name);
-	for(int i=0; i<list->length; i++) {
-		printf("%d", at(list, i));
-		if(i < list->length-1){
-			printf(",");
-		}
-	}
-	printf("]\n");
-}
-
-/**
- * Appends a new element to the end of the list
- * */
-void append(list_t *list, int value) {
-	if(list->length + list->shift == list->size) {
-		int newsize = list->size * 3 / 2;
-		int* new_values = (int*)malloc(newsize * sizeof(int));
-		memcpy(new_values, list->values, list->size * sizeof(int));
-		free(list->values);
-		list->values = new_values;
-		list->size = newsize;
-	}
-	list->values[list->length + list->shift] = value;
-	list->length++;
-}
-
-/**
- * Set the given element at the specified index.
- * */
-void set(list_t *list, int index, int value) {
-	list->values[index + list->shift] = value;
-}
-
-
-/**
- * Remove and returnt the first element of the list
- * */
-int shift(list_t *list) {
-	int ret = at(list, 0);
-	list->shift++; list->length--;
-	return ret;
-}
-/***************** LIST OPERATIONS ********************************/
-
 
 // Store the list of settings for the operations
 t_op operations [] = {
@@ -239,7 +167,7 @@ list_t run(int *registers, list_t* input) {
 int test_sequence(int* registers, size_t n_registers, int* init_sequence) {
 	int amplifier[n_registers];
 	list_t input = init_list(), output = init_list();
-	set(&output, 0, 0);
+	append(&output, 0);
 	for(int i=0; i<N_AMPS; i++) {
 		append(&input, init_sequence[i]);
 		append(&input, at(&output, 0));
