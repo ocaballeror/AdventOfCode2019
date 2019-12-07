@@ -56,3 +56,16 @@ teardown() {
 	echo "$out"
 	[ "$out" = "Output: 34579864" ]
 }
+
+@test "part 1 leaks" {
+	cp $BATS_TMPDIR/input .
+	out=$(valgrind ./sol1 2>&1)
+	echo "$out"
+	echo "$out" | grep -q "All heap blocks were freed -- no leaks are possible"
+}
+@test "part 2 leaks" {
+	cp $BATS_TMPDIR/input .
+	out=$(valgrind ./sol2 2>&1)
+	echo "$out"
+	echo "$out" | grep -q "All heap blocks were freed -- no leaks are possible"
+}

@@ -202,6 +202,7 @@ int simulate(int *registers, size_t n_registers) {
 			/* printf("\n"); */
 		}
 	}
+	free(permutations.values);
 	return best;
 }
 
