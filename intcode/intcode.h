@@ -5,6 +5,7 @@
 
 typedef struct {
 	long *registers;
+	size_t regcount;
 	int pc;
 	int rel_base;
 } t_memory;
@@ -16,7 +17,7 @@ typedef struct {
 	void (*func)(t_memory*, long*);
 } t_op;
 
-t_memory* init_t_memory(long *registers);
+t_memory* init_t_memory(long *registers, size_t regcount);
 void free_t_memory();
 
 // Operations

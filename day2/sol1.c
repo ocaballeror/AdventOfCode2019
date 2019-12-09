@@ -5,7 +5,7 @@
 int main(){
 	size_t count;
 	long *registers = read_input(&count);
-	t_memory* memory = init_t_memory(registers);
+	t_memory* memory = init_t_memory(registers, count);
 	registers[1] = 12;
 	registers[2] = 2;
 	start(memory);

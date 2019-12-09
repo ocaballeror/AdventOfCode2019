@@ -8,7 +8,7 @@ int main(){
     size_t count;
     long *input = read_input(&count);
     long* registers = (long*)malloc(count * sizeof(long));
-	t_memory* memory = init_t_memory(registers);
+	t_memory* memory = init_t_memory(registers, count);
 
     int found = 0;
     int expect = 19690720;

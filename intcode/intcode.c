@@ -20,8 +20,9 @@ t_op operations [] = {
 	{3, 3,  0, equals},
 };
 
-t_memory* init_t_memory(long* registers) {
+t_memory* init_t_memory(long* registers, size_t count) {
 	t_memory *memory = malloc(sizeof(t_memory));
+	memory->regcount = count;
 	memory->registers = registers;
 	memory->pc = 0; memory->rel_base = 0;
 	return memory;
@@ -134,7 +135,7 @@ void start(t_memory *memory) {
 long* run() {
 	size_t count;
 	long *registers = read_input(&count);
-	t_memory* memory = init_t_memory(registers);
+	t_memory* memory = init_t_memory(registers, count);
 	start(memory);
 	long* copy = (long*)malloc(count * sizeof(long));
 	memcpy(copy, registers, count * sizeof(long));
