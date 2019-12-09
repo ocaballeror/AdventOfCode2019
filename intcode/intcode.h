@@ -31,6 +31,7 @@ void branch_true(t_memory *memory, long *args);
 void branch_false(t_memory *memory, long *args);
 void lessthan(t_memory *memory, long *args);
 void equals(t_memory *memory, long *args);
+void setbase(t_memory *memory, long *args);
 
 void run_op(t_memory *memory);
 void start(t_memory *memory);

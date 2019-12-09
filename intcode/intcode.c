@@ -18,6 +18,7 @@ t_op operations [] = {
 	{2, -1, 1, branch_false},
 	{3, 3,  0, lessthan},
 	{3, 3,  0, equals},
+	{1, -1, 0, setbase},
 };
 
 t_memory* init_t_memory(long* registers, size_t count) {
@@ -98,6 +99,10 @@ void lessthan(t_memory *memory, long *args) {
 void equals(t_memory *memory, long *args) {
 	memory->registers[args[2]] = (args[0] == args[1]);
 }
+void setbase(t_memory *memory, long *args) {
+	/* printf("Set rel base to %d\n", args[0]); */
+	memory->rel_base += args[0];
+}
 
 // Run a single operation.
 void run_op(t_memory *memory) {
@@ -110,9 +115,17 @@ void run_op(t_memory *memory) {
 	long* args = (long*)malloc(n_args * sizeof(long));
 	for(int i=0; i < n_args; i++) {
 		args[i] = registers[memory->pc+i+1];
-		int immediate = (int)(op / pow(10, i+2)) % 10;
-		if(i+1 != output && !immediate) {
-			args[i] = registers[args[i]];
+		int mode = (int)(op / pow(10, i+2)) % 10;
+		if(i+1 != output) {
+			if(mode == 0){
+				args[i] = registers[args[i]];
+			} else if (mode == 2){
+				args[i] = registers[memory->rel_base + args[i]];
+			}
+		} else {
+			if(mode == 2) {
+				args[i] += memory->rel_base;
+			}
 		}
 	}
 
