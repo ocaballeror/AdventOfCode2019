@@ -28,7 +28,7 @@ long at(list_t *list, int index){
 void print(list_t *list, char *name) {
 	printf("%s: [", name);
 	for(int i=0; i<list->length; i++) {
-		printf("%d", at(list, i));
+		printf("%ld", at(list, i));
 		if(i < list->length-1){
 			printf(",");
 		}

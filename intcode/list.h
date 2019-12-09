@@ -1,3 +1,6 @@
+#ifndef LIST_H
+#define LIST_H
+
 typedef struct {
 	long *values;
 	int length;
@@ -11,3 +14,5 @@ void print(list_t*, char*);
 void append(list_t*, long);
 void set(list_t*, int, long);
 long shift(list_t*);
+
+#endif
