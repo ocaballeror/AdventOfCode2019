@@ -39,7 +39,7 @@ void free_t_memory(t_memory* memory) {
  * Takes a NULL int pointer to store the values that it reads from the file and
  * returns the number of elements in it.
  * */
-long* read_input(size_t* size) {
+t_memory* read_input() {
 	FILE *file = fopen("input", "r");
 	if(!file) {
 		perror("Input file");
@@ -53,7 +53,6 @@ long* read_input(size_t* size) {
 	while ((c = fgetc(file)) != EOF) {
 		if (c == ',') count ++;
 	}
-	*size = count;
 
 	// Read our input and store it in the registers array
 	long* registers = (long*)malloc(count * sizeof(long));
@@ -62,7 +61,8 @@ long* read_input(size_t* size) {
 	while((fscanf(file, "%ld,", &registers[i])) != EOF) i++;
 	fclose(file);
 
-	return registers;
+	t_memory* memory = init_t_memory(registers, count);
+	return memory;
 }
 
 void noop(t_memory *memory, long *args) {}
@@ -146,12 +146,10 @@ void start(t_memory *memory) {
 }
 
 long* run() {
-	size_t count;
-	long *registers = read_input(&count);
-	t_memory* memory = init_t_memory(registers, count);
+	t_memory* memory = read_input();
 	start(memory);
-	long* copy = (long*)malloc(count * sizeof(long));
-	memcpy(copy, registers, count * sizeof(long));
+	long* copy = (long*)malloc(memory->regcount * sizeof(long));
+	memcpy(copy, memory->registers, memory->regcount * sizeof(long));
 	free_t_memory(memory);
 	return copy;
 }

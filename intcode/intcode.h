@@ -21,7 +21,7 @@ t_memory* init_t_memory(long *registers, size_t regcount);
 void free_t_memory();
 
 // Operations
-long* read_input(size_t* size);
+t_memory* read_input();
 void noop(t_memory *memory, long *args);
 void sum(t_memory *memory, long *args);
 void mul(t_memory *memory, long *args);
