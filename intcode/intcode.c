@@ -21,14 +21,14 @@ t_op operations [] = {
 	{1, -1, 0, setbase},
 };
 
-t_memory* init_t_memory(long* registers, size_t count) {
+t_memory* init_t_memory(list_t* registers) {
 	t_memory *memory = malloc(sizeof(t_memory));
-	memory->regcount = count;
 	memory->registers = registers;
 	memory->pc = 0; memory->rel_base = 0;
 	return memory;
 }
 void free_t_memory(t_memory* memory) {
+	free(memory->registers->values);
 	free(memory->registers);
 	free(memory);
 }
@@ -46,37 +46,33 @@ t_memory* read_input() {
 		exit(1);
 	}
 
-	// Count the number of elements in the input. start at one because the last
-	// element doesn't have a comma
-	int count = 1;
-	char c;
-	while ((c = fgetc(file)) != EOF) {
-		if (c == ',') count ++;
-	}
-
-	// Read our input and store it in the registers array
-	long* registers = (long*)malloc(count * sizeof(long));
-	fseek(file, 0, SEEK_SET);
+	// Read our input and store it in the registers list
+	list_t* registers = malloc(sizeof(list_t));
+	*registers = init_list();
 	int i = 0;
-	while((fscanf(file, "%ld,", &registers[i])) != EOF) i++;
+	long read;
+	while((fscanf(file, "%ld,", &read)) != EOF){
+		append(registers, read);
+		i++;
+	}
 	fclose(file);
 
-	t_memory* memory = init_t_memory(registers, count);
+	t_memory* memory = init_t_memory(registers);
 	return memory;
 }
 
 void noop(t_memory *memory, long *args) {}
 void sum(t_memory *memory, long *args) {
-	memory->registers[args[2]] = args[0] + args[1];
+	set(memory->registers, args[2], args[0] + args[1]);
 }
 void mul(t_memory *memory, long *args) {
-	memory->registers[args[2]] = args[0] * args[1];
+	set(memory->registers, args[2], args[0] * args[1]);
 }
 void input(t_memory *memory, long *args){
 	long in;
 	printf("Input: ");
 	scanf("%ld", &in);
-	memory->registers[args[0]] = in;
+	set(memory->registers, args[0], in);
 }
 void output(t_memory *memory, long *args) {
 	printf("Out: %ld\n", args[0]);
@@ -94,10 +90,10 @@ void branch_false(t_memory *memory, long *args) {
 		memory->pc += 3;  // Manually skip to the next instruction
 }
 void lessthan(t_memory *memory, long *args) {
-	memory->registers[args[2]] = (args[0] < args[1]);
+	set(memory->registers, args[2], (args[0] < args[1]));
 }
 void equals(t_memory *memory, long *args) {
-	memory->registers[args[2]] = (args[0] == args[1]);
+	set(memory->registers, args[2], (args[0] == args[1]));
 }
 void setbase(t_memory *memory, long *args) {
 	/* printf("Set rel base to %d\n", args[0]); */
@@ -106,21 +102,21 @@ void setbase(t_memory *memory, long *args) {
 
 // Run a single operation.
 void run_op(t_memory *memory) {
-	long* registers = memory->registers;
-	int op = registers[memory->pc];
+	list_t* registers = memory->registers;
+	int op = at(registers, memory->pc);
 	int opcode = op % 100;
 	int n_args = operations[opcode].args;
 	int output = operations[opcode].output;
 
 	long* args = (long*)malloc(n_args * sizeof(long));
 	for(int i=0; i < n_args; i++) {
-		args[i] = registers[memory->pc+i+1];
+		args[i] = at(registers, memory->pc+i+1);
 		int mode = (int)(op / pow(10, i+2)) % 10;
 		if(i+1 != output) {
 			if(mode == 0){
-				args[i] = registers[args[i]];
+				args[i] = at(registers, args[i]);
 			} else if (mode == 2){
-				args[i] = registers[memory->rel_base + args[i]];
+				args[i] = at(registers, memory->rel_base + args[i]);
 			}
 		} else {
 			if(mode == 2) {
@@ -128,6 +124,10 @@ void run_op(t_memory *memory) {
 			}
 		}
 	}
+
+	/* printf("OP: %d, args: ", opcode); */
+	/* for(int i=0; i<n_args; i++) printf("%ld ", args[i]); */
+	/* printf("\n"); */
 
 	operations[opcode].func(memory, args);
 	if(!operations[opcode].branches){
@@ -140,7 +140,7 @@ void run_op(t_memory *memory) {
 void start(t_memory *memory) {
 	// Run the program until it halts
 	memory->pc = 0;
-	while(memory->registers[memory->pc] != 99) {
+	while(at(memory->registers, memory->pc) != 99) {
 		run_op(memory);
 	}
 }
@@ -148,8 +148,8 @@ void start(t_memory *memory) {
 long* run() {
 	t_memory* memory = read_input();
 	start(memory);
-	long* copy = (long*)malloc(memory->regcount * sizeof(long));
-	memcpy(copy, memory->registers, memory->regcount * sizeof(long));
+	long* copy = (long*)malloc(memory->registers->length * sizeof(long));
+	memcpy(copy, memory->registers, memory->registers->length * sizeof(long));
 	free_t_memory(memory);
 	return copy;
 }

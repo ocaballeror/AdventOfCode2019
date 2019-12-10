@@ -1,11 +1,11 @@
 #include <stdlib.h>
+#include "list.h"
 
 #ifndef INTCODE_H
 #define INTCODE_H
 
 typedef struct {
-	long *registers;
-	size_t regcount;
+	list_t *registers;
 	int pc;
 	int rel_base;
 } t_memory;
@@ -17,7 +17,7 @@ typedef struct {
 	void (*func)(t_memory*, long*);
 } t_op;
 
-t_memory* init_t_memory(long *registers, size_t regcount);
+t_memory* init_t_memory(list_t *registers);
 void free_t_memory();
 
 // Operations
