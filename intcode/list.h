@@ -8,7 +8,8 @@ typedef struct {
 	int shift;
 } list_t;
 
-list_t init_list();
+list_t* init_list();
+void free_list();
 long at(list_t*, int);
 void print(list_t*, char*);
 void append(list_t*, long);

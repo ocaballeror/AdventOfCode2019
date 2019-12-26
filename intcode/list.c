@@ -6,10 +6,21 @@
 /**
  * Initializes and returns a new list
  * */
-list_t init_list() {
-	long *initial = (long*)malloc(10 * sizeof(long));
-	list_t list = {.size=10, .length=0, .shift=0, .values=initial};
+list_t* init_list() {
+	list_t* list = malloc(sizeof(list_t));
+	list->values = (long*)malloc(10 * sizeof(long));
+	list->size = 10;
+	list->length = 0;
+	list->shift = 0;
 	return list;
+}
+
+/**
+ * Free a list object
+ * */
+void free_list(list_t* list) {
+	free(list->values);
+	free(list);
 }
 
 /**

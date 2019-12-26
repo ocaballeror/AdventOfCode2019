@@ -28,8 +28,7 @@ t_memory* init_t_memory(list_t* registers) {
 	return memory;
 }
 void free_t_memory(t_memory* memory) {
-	free(memory->registers->values);
-	free(memory->registers);
+	free_list(memory->registers);
 	free(memory);
 }
 
@@ -47,8 +46,7 @@ t_memory* read_input() {
 	}
 
 	// Read our input and store it in the registers list
-	list_t* registers = malloc(sizeof(list_t));
-	*registers = init_list();
+	list_t* registers = init_list();
 	int i = 0;
 	long read;
 	while((fscanf(file, "%ld,", &read)) != EOF){

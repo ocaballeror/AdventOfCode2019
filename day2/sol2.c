@@ -6,8 +6,7 @@
 
 int main(){
 	t_memory *input = read_input();
-	list_t* registers = malloc(sizeof(list_t));
-	*registers = init_list();
+	list_t* registers = init_list();
 	for(int i=0; i<input->registers->length; i++)
 		append(registers, at(input->registers, i));
 	t_memory* memory = init_t_memory(registers);
