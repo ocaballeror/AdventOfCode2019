@@ -35,6 +35,6 @@ void setbase(t_memory *memory, long *args);
 
 void run_op(t_memory *memory);
 void start(t_memory *memory);
-long* run();
+long* run(int);
 
 #endif

@@ -143,11 +143,14 @@ void start(t_memory *memory) {
 	}
 }
 
-long* run() {
+long* run(int ret) {
 	t_memory* memory = read_input();
 	start(memory);
-	long* copy = (long*)malloc(memory->registers->length * sizeof(long));
-	memcpy(copy, memory->registers, memory->registers->length * sizeof(long));
+	if(ret) {
+		long* copy = (long*)malloc(memory->registers->length * sizeof(long));
+		memcpy(copy, memory->registers, memory->registers->length * sizeof(long));
+		return copy;
+	}
 	free_t_memory(memory);
-	return copy;
+	return NULL;
 }

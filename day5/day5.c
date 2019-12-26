@@ -2,7 +2,6 @@
 #include "intcode.h"
 
 int main(){
-	long *registers = run();
-	free(registers);
+	run(0);
 	return 0;
 }
