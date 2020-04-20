@@ -16,12 +16,20 @@ list_t* init_list() {
 }
 
 /**
+ * Empty a list
+ * */
+void clear_list(list_t* list) {
+	for(int i=list->shift; i<list->shift + list->length; i++) {
+		free(list->values[i]);
+	}
+	list->length = 0;
+}
+
+/**
  * Free a list object
  * */
 void free_list(list_t* list) {
-	for(int i=0; i<list->shift + list->length; i++) {
-		free(list->values[i]);
-	}
+	clear_list(list);
 	free(list->values);
 	free(list);
 }
@@ -69,6 +77,19 @@ void* shift_p(list_t *list) {
 	void* ret = at_p(list, 0);
 	list->shift++; list->length--;
 	return ret;
+}
+
+/**
+ * Create a copy of the list.
+ *
+ * The 'other' parameter must be an initalized list that will be cleared
+ * beforehand
+ * */
+void copy_list(list_t* list, list_t* other) {
+	clear_list(other);
+	for(int i=0; i<list->length; i++) {
+		append(other, at(list, i));
+	}
 }
 
 
