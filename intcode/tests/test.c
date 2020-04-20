@@ -19,7 +19,7 @@ int test_append(){
 		assert_equal(at(list, i), i);
 	}
 
-	free(list->values);
+	free_list(list);
 	return 1;
 }
 
@@ -51,7 +51,7 @@ int test_shift() {
 	assert_equal(at(list, 99), 1);
 	assert_equal(list->length, 100);
 
-	free(list->values);
+	free_list(list);
 	return 1;
 }
 
@@ -71,12 +71,9 @@ int test_set() {
 	set(list, 3, 4);
 	assert_equal(at(list, 1), 3);
 	assert_equal(at(list, 2), 0);
-	printf("%d\n", at(list, 3));
-	printf("%d\n", at(list, 4));
-	printf("%d\n", at(list, 5));
 	assert_equal(at(list, 3), 4);
 
-	free(list->values);
+	free_list(list);
 	return 1;
 }
 

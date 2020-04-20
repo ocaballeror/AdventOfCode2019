@@ -2,7 +2,7 @@
 #define LIST_H
 
 typedef struct {
-	long *values;
+	void **values;
 	int length;
 	int size;
 	int shift;
@@ -10,6 +10,12 @@ typedef struct {
 
 list_t* init_list();
 void free_list();
+
+void* at_p(list_t*, int);
+void append_p(list_t*, void*);
+void set_p(list_t*, int, void*);
+void* shift_p(list_t*);
+
 long at(list_t*, int);
 void print(list_t*, char*);
 void append(list_t*, long);
