@@ -39,8 +39,6 @@ void free_list(list_t* list) {
  * on .values
  * */
 void* at_p(list_t *list, int index){
-	if(index > list->length)
-		return 0;
 	return list->values[index + list->shift];
 }
 
@@ -98,6 +96,8 @@ void copy_list(list_t* list, list_t* other) {
 ////////////////////////////////////////////////////
 
 long at(list_t* list, int index) {
+	if(index > list->length)
+		return 0;
 	return *((long*)at_p(list, index));
 }
 void append(list_t* list, long value) {
