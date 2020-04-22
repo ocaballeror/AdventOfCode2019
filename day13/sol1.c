@@ -8,7 +8,7 @@ typedef struct {
 	int type;
 } tile_t;
 
-tile_t* current;
+tile_t current;
 int blocks = 0;
 int outcount = 0;
 
@@ -18,12 +18,11 @@ int outcount = 0;
 void new_output(t_memory *memory, long *args) {
 	long value = args[0];
 	if(outcount == 0) {
-		current = malloc(sizeof(tile_t));
-		current->x = value;
+		current.x = value;
 	} else if(outcount == 1) {
-		current->y = value;
+		current.y = value;
 	} else {
-		current->type = value;
+		current.type = value;
 		if(value == 2) blocks++;
 	}
 	outcount = (outcount + 1) % 3;
