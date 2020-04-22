@@ -111,7 +111,10 @@ void set(list_t* list, int index, long value){
 	set_p(list, index, ptr);
 }
 long shift(list_t* list) {
-	return *((long*) shift_p(list));
+	long* ptr = (long*) shift_p(list);
+	long ret = *ptr;
+	free(ptr);
+	return ret;
 }
 
 /**
