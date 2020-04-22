@@ -96,7 +96,7 @@ void copy_list(list_t* list, list_t* other) {
 ////////////////////////////////////////////////////
 
 long at(list_t* list, int index) {
-	if(index > list->length)
+	if(index >= list->length)
 		return 0;
 	return *((long*)at_p(list, index));
 }
