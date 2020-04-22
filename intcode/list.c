@@ -48,10 +48,7 @@ void* at_p(list_t *list, int index){
 void append_p(list_t *list, void* value) {
 	if(list->length + list->shift == list->size) {
 		int newsize = list->size * 3 / 2;
-		void* new_values = malloc(newsize * sizeof(void*));
-		memcpy(new_values, list->values, list->size * sizeof(void*));
-		free(list->values);
-		list->values = new_values;
+		list->values = realloc(list->values, newsize * sizeof(void*));
 		list->size = newsize;
 	}
 	list->values[list->length + list->shift] = value;
