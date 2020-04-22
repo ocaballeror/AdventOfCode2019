@@ -13,21 +13,13 @@ teardown() {
 	run ./sol1
 	[ "$status" = 0 ]
 	echo "$output"
-	[ "$output" = "Number of blocks: 208" ]
+	[ "$output" = "Number of blocks: 284" ]
 }
 @test "Part 2" {
-	run ./sol2
+	run ./sol2 --no-draw
 	[ "$status" = 0 ]
 	echo "$output"
-	cat >/tmp/expect <<EOF
-.####..##..###..###...##..####...##.#..#...
-.#....#..#.#..#.#..#.#..#.#.......#.#.#....
-.###..#..#.#..#.###..#....###.....#.##.....
-.#....####.###..#..#.#....#.......#.#.#....
-.#....#..#.#.#..#..#.#..#.#....#..#.#.#....
-.#....#..#.#..#.###...##..#.....##..#..#...
-EOF
-	[ "$output" = "$(cat /tmp/expect)" ]
+	[ "$output" = "Final score: 13581" ]
 }
 
 @test "Part 1 leaks" {
@@ -35,6 +27,6 @@ EOF
 	echo "$output" | grep -q "All heap blocks were freed -- no leaks are possible"
 }
 @test "Part 2 leaks" {
-	run valgrind ./sol2
+	run valgrind ./sol2 --no-draw
 	echo "$output" | grep -q "All heap blocks were freed -- no leaks are possible"
 }
