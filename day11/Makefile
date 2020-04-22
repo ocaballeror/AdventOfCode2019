@@ -4,9 +4,9 @@ LIBS=-lm
 CFLAGS=-g -Wall -I$(IDIR)
 
 DEPS=../intcode/*.o
-TARGET=sol1
+TARGET=sol1 sol2
 
-all: sol1
+all: sol1 sol2
 
 $(DEPS):
 	make -C ../intcode
@@ -15,6 +15,9 @@ $(DEPS):
 	$(CC) -c -o $@ $^ $(CFLAGS)
 
 sol1: sol1.o dequeue.o $(DEPS)
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+
+sol2: sol2.o dequeue.o $(DEPS)
 	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
 
 .PHONY: clean
