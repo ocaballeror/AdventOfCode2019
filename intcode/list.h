@@ -18,6 +18,7 @@ void* at_p(list_t*, int);
 void append_p(list_t*, void*);
 void set_p(list_t*, int, void*);
 void* shift_p(list_t*);
+void* pop_p(list_t*);
 
 long at(list_t*, int);
 void print(list_t*, char*);

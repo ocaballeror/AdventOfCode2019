@@ -69,11 +69,20 @@ void set_p(list_t *list, int index, void* value) {
 
 
 /**
- * Remove and returnt the first element of the list
+ * Remove and return the first element of the list
  * */
 void* shift_p(list_t *list) {
 	void* ret = at_p(list, 0);
 	list->shift++; list->length--;
+	return ret;
+}
+
+/**
+ * Remove and return the last element of the list
+ * */
+void* pop_p(list_t *list) {
+	void* ret = at_p(list, list->length-1);
+	list->length--;
 	return ret;
 }
 
