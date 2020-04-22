@@ -158,31 +158,31 @@ int test_sequence(int* registers, size_t n_registers, int* init_sequence) {
 	int amplifiers[N_AMPS][n_registers];
 	int pcs[N_AMPS] = {0};
 	int current_amp = 0;
-	list_t input = init_list();
-	list_t output = init_list();
+	list_t* input = init_list();
+	list_t* output = init_list();
 	for(int i=0; i<N_AMPS; i++) {
 		memcpy(amplifiers[i], registers, n_registers*sizeof(int));
 		// the input list will have gaps for the output of the amps
 		// for ex.: [5, 5, 6, 6, 7, 7, 8, 8, 9, 9];
 		// we will replace the second number of each with the output of the previous amp
-		append(&input, init_sequence[i]);
-		append(&input, init_sequence[i]);
+		append(input, init_sequence[i]);
+		append(input, init_sequence[i]);
 	}
-	set(&input, 1, 0);  // Set the initial input for amp A
+	set(input, 1, 0);  // Set the initial input for amp A
 
 	int last_output = 0;
 	while(amplifiers[current_amp][pcs[current_amp]] != 99) {
-		pcs[current_amp] = run_op(amplifiers[current_amp], pcs[current_amp], &input, &output);
-		if(output.length > 0) {
+		pcs[current_amp] = run_op(amplifiers[current_amp], pcs[current_amp], input, output);
+		if(output->length > 0) {
 			// If we already have data in the input buffer means we are already
 			// running the init sequence, therefore skip the first number and
 			// insert it at the second position
 			/* int insert_idx = input.length > 0? 1 : 0; */
-			last_output = shift(&output);
-			if (input.length > 0)
-				set(&input, 1, last_output);
+			last_output = shift(output);
+			if (input->length > 0)
+				set(input, 1, last_output);
 			else
-				append(&input, last_output);
+				append(input, last_output);
 
 			// Switch to the next amp
 			current_amp = (current_amp+1) % N_AMPS;
@@ -190,19 +190,19 @@ int test_sequence(int* registers, size_t n_registers, int* init_sequence) {
 		}
 	}
 
-	free(output.values);
-	free(input.values);
+	free_list(output);
+	free_list(input);
 	return last_output;
 }
 
 int simulate(int *registers, size_t n_registers) {
 	int res = 0, best = 0;
 	int values[] = {5,6,7,8,9};
-	list_t permutations = init_list();
-	permute(values, 0, N_AMPS-1, &permutations);
-	for(int i=0; i<permutations.length; i++) {
+	list_t* permutations = init_list();
+	permute(values, 0, N_AMPS-1, permutations);
+	for(int i=0; i<permutations->length; i++) {
 		int test[N_AMPS];
-		int number = at(&permutations, i);
+		int number = at(permutations, i);
 		for(int j=0; j<N_AMPS; j++) {
 			test[N_AMPS-j-1] = (int)(number / pow(10, j)) % 10;
 		}
@@ -215,7 +215,7 @@ int simulate(int *registers, size_t n_registers) {
 			/* printf("\n"); */
 		}
 	}
-	free(permutations.values);
+	free_list(permutations);
 	return best;
 }
 
