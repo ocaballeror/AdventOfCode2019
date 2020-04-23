@@ -25,5 +25,6 @@ void print(list_t*, char*);
 void append(list_t*, long);
 void set(list_t*, int, long);
 long shift(list_t*);
+long pop(list_t*);
 
 #endif

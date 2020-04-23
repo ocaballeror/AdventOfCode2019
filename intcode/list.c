@@ -122,6 +122,12 @@ long shift(list_t* list) {
 	free(ptr);
 	return ret;
 }
+long pop(list_t* list) {
+	long* ptr = (long*) pop_p(list);
+	long ret = *ptr;
+	free(ptr);
+	return ret;
+}
 
 /**
  * Print the list in one line, prefixed by the given string

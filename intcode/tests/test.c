@@ -77,17 +77,39 @@ int test_set() {
 	return 1;
 }
 
+int test_pop() {
+	list_t* list = init_list();
+	append(list, 0);
+	assert_equal(pop(list), 0);
+	assert_equal(list->length, 0);
+
+	append(list, 0);
+	append(list, 1);
+	append(list, 2);
+	append(list, 3);
+	assert_equal(shift(list), 0);
+	assert_equal(pop(list), 3);
+	assert_equal(pop(list), 2);
+	assert_equal(list->length, 1);
+	assert_equal(at(list, 0), 1);
+
+	free_list();
+	return 1;
+}
+
 int main() {
 	int (*tests[])() = {
 		test_append,
 		test_shift,
 		test_set,
+		test_pop,
 		NULL
 	};
 	char* names[] = {
 		"test_append",
 		"test_shift",
 		"test_set",
+		"test_pop",
 	};
 
 	for(int i=0; tests[i] != NULL; i++) {
