@@ -1,16 +1,18 @@
 # rubocop:disable Style/GlobalVars, Metrics/AbcSize, Metrics/CyclomaticComplexity
 require 'set'
 
-$asteroids = Set.new
-IO.readlines('input').each_with_index do |line, y|
-  line.split('').each_with_index do |block, x|
-    $asteroids << [x, y] if block == '#'
+def read_input
+  $asteroids = Set.new
+  IO.readlines('input').each_with_index do |line, y|
+    line.strip.split('').each_with_index do |block, x|
+      $asteroids << [x, y] if block == '#'
+    end
   end
+  $maxx = $asteroids.max_by { |x, _| x }[0]
+  $maxy = $asteroids.max_by { |_, y| y }[1]
+  $minx = $asteroids.min_by { |x, _| x }[0]
+  $miny = $asteroids.min_by { |_, y| y }[1]
 end
-$maxx = $asteroids.max_by { |x, _| x }[0]
-$maxy = $asteroids.max_by { |_, y| y }[1]
-$minx = $asteroids.min_by { |x, _| x }[0]
-$miny = $asteroids.min_by { |_, y| y }[1]
 
 def simplify_fraction(numer, denom)
   # calculate greatest common denominator
@@ -42,31 +44,32 @@ def lineofsight(block, other)
   blocks
 end
 
-max = 0
-best = nil
-bestlos = nil
-$asteroids.each do |one|
-  # count how many other blocks in can see
-  count = 0
-  blocked = Set.new
-  lines = Set.new
-  $asteroids.each do |other|
-    next if one == other
-    next if blocked.include? other
+def part1
+  max = 0
+  best = nil
+  bestlos = nil
+  $asteroids.each do |one|
+    # count how many other blocks in can see
+    count = 0
+    blocked = Set.new
+    lines = Set.new
+    $asteroids.each do |other|
+      next if one == other
+      next if blocked.include? other
 
-    los = lineofsight(one, other)
-    lines << los
-    count += 1 if los[0] == other
-    blocked.merge los[1..]
+      los = lineofsight(one, other)
+      lines << los
+      count += 1 if los[0] == other
+      blocked.merge los[1..]
+    end
+    if count > max
+      max = count
+      best = one
+      bestlos = lines
+    end
   end
-  if count > max
-    max = count
-    best = one
-    bestlos = lines
-  end
+  [best, max, bestlos]
 end
-
-puts "Best location #{best} can see #{max} asteroids"
 
 # utility function to sort coordinates clock-wise
 def compare(x, y)
@@ -82,26 +85,39 @@ def compare(x, y)
   end
 end
 
-# sort the list of lines of sight in clock-wise order relative to the
-# best location
-los = bestlos.to_a.sort do |a, b|
-  a = [a.first[0] - best[0], a.first[1] - best[1]]
-  b = [b.first[0] - best[0], b.first[1] - best[1]]
-  compare(*a) <=> compare(*b)
-end
-
-# now that our lines of sight are sorted, vaporize them one by one until
-# we reach our desired count
-i = 0 
-vaporized = nil
-while i < 200
-  los.each do |line|
-    next if line.empty?
-
-    vaporized = line.shift
-    i+=1
-    break if i == 200
+def part2(best, bestlos)
+  # sort the list of lines of sight in clock-wise order relative to the
+  # best location
+  los = bestlos.to_a.sort do |a, b|
+    a = [a.first[0] - best[0], a.first[1] - best[1]]
+    b = [b.first[0] - best[0], b.first[1] - best[1]]
+    compare(*a) <=> compare(*b)
   end
+
+  # now that our lines of sight are sorted, vaporize them one by one until
+  # we reach our desired count
+  i = 0 
+  vaporized = nil
+  while i < 200
+    los.each do |line|
+      next if line.empty?
+
+      vaporized = line.shift
+      i+=1
+      break if i == 200
+    end
+  end
+  vaporized
 end
-ans = vaporized[0] * 100 + vaporized[1]
-puts "200th vaporization: #{vaporized}. Part 2 answer: #{ans}"
+
+# very pythonic, I know
+if __FILE__ == $0
+  read_input
+
+  best, max, bestlos = part1
+  puts "Best location #{best} can see #{max} asteroids"
+
+  bet = part2(best, bestlos)
+  ans = bet[0] * 100 + bet[1]
+  puts "200th vaporization: #{bet}. Part 2 answer: #{ans}"
+end
