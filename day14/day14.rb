@@ -38,74 +38,87 @@ def read_input
   reactions
 end
 
-def debug(str)
-  'proxy all the debug print calls for easy commenting/uncommenting'
-  # puts str
-end
+# Calculate how much ORE we need to generate the given amount of FUEL
+def calc_ore(fuel)
+  reactions = read_input
 
-def obtain(qty, comp, reactions, have)
-  react = reactions[comp]
-  debug react.to_s
-  until have[comp] >= qty
-    react.reqs.each do |req_qty, req_comp|
-      if req_comp == 'ORE'
-        debug "+#{req_qty} ORE"
-        have['ORE'] += req_qty
+  # how much of each item we have on hand (from excess product from past
+  # reactions)
+  have = Hash.new 0
+
+  # tracks how much of each item we still need to generate
+  wishlist = Hash.new 0
+
+  # initialize the wishlist with the requirements for FUEL
+  reactions['FUEL'].reqs.each { |qty, comp| wishlist[comp] = qty * fuel }
+
+  until wishlist.values.all?(&:zero?)
+    comp, qty = wishlist.shift
+
+    # how many times do we need to run this reaction to get what we need
+    mult = (qty / reactions[comp].qty.to_f).ceil
+
+    # add the excess from the reaction to our `have` buffer
+    have[comp] += reactions[comp].qty * mult - qty
+    reactions[comp].reqs.each do |req_qty, req|
+      req_qty *= mult
+      if req == 'ORE'
+        have[req] += req_qty
         next
       end
 
-      debug "have #{have}"
-      debug "obtain #{req_qty} #{req_comp}"
-      obtain(req_qty, req_comp, reactions, have)
-      have[req_comp] -= req_qty
-      debug "-#{req_qty} #{req_comp}"
+      # if we have enough in our hands use that right away
+      if req_qty <= have[req]
+        req_qty = 0
+        have[req] -= req_qty
+      else
+        req_qty -= have[req]
+        have[req] = 0
+      end
+
+      # add new requirement to the running wishlist
+      wishlist[req] += req_qty
     end
-    debug "+#{react.qty} #{comp}"
-    have[comp] += react.qty
   end
+  have['ORE']
 end
 
 def part1
-  have = Hash.new 0
-  obtain(1, 'FUEL', read_input, have)
-  puts "Part 1: #{have['ORE']} ORE"
+  calc_ore(1)
 end
 
 def part2
-  puts 'This takes a while...'
-  reactions = read_input
-  have = Hash.new 0
-  first = obtain(1, 'FUEL', read_input, have)
-  ore_per_fuel = have['ORE']
-  ore_cycle = 0
-  fuel_cycle = 0
-  2.step.each do |it|
-    obtain(it, 'FUEL', reactions, have)
-    components = have.reject { |w| %w[FUEL ORE].include? w }
-    next unless components.values.all?(&:zero?)
+  # Using the calc_ore() function, which can calculate the amount of ORE
+  # needed for n units of FUEL in constant time, run a binary search between a
+  # lower and an upper bound to find the right number of FUEL units we can
+  # produce with the given amount of ORE.
 
-    ore_cycle = have['ORE']
-    fuel_cycle = it
-    break
-  end
-
-  puts "ore cycle: #{ore_cycle}"
-  puts "fuel cycle: #{fuel_cycle}"
-
+  # amount of total ore to burn
   target = 1_000_000_000_000
-  have = Hash.new 0
-  # because `obtain` increases ORE instead of reducing it, we need to invert the
-  # value of ORE to know when we run out of it
-  have['ORE'] = -(target % ore_cycle)
-  have['FUEL'] = fuel_cycle * (target / ore_cycle)
-  have['FUEL'].step.each do |it|
-    obtain(it, 'FUEL', read_input, have)
-    break if have['ORE'] > -ore_per_fuel
+  # ore per fuel
+  ore = calc_ore(1)
+  # the "expected" amount of total fuel is our lowest possible limit. only
+  # reachable if we had zero left overs between iterations
+  low = target / ore
+  # we can never reach double the lower limit. that would mean we have enough
+  # left overs to get iterations for free.
+  high = low * 2
+
+  # binary search
+  while low <= high
+    mid = low + (high - low) / 2
+    distance = target - calc_ore(mid)
+    if distance.abs < ore
+      break distance.negative? ? mid - 1 : mid
+    elsif distance > 0
+      low = mid + 1
+    else
+      high = mid - 1
+    end
   end
-  puts "Part 2: #{have['FUEL']} FUEL"
 end
 
 if $PROGRAM_NAME == __FILE__
-  part1
-  part2
+  puts "Part 1: #{part1}"
+  puts "Part 2: #{part2}"
 end
