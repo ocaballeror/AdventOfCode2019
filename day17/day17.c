@@ -2,6 +2,8 @@
 #include "intcode.h"
 #include "list.h"
 
+extern t_op operations [];
+
 void newoutput(t_memory *memory, long *args) {
     if (args[0] <= 127)
         printf("%c", (int)args[0]);
