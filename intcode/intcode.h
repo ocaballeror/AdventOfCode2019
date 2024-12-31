@@ -37,4 +37,8 @@ void run_op(t_memory *memory);
 void start(t_memory *memory);
 long* run(int);
 
+
+extern t_op operations[];
+
+
 #endif
